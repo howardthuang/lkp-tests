@@ -26,11 +26,14 @@ class Stater
         result = $1
         test_case = $2
 
+        if stats.key? test_case
+          return
+
         if test_case =~ /SKIP/
           # selftests: cgroup: test_stress.sh
           # ok 4 # SKIP test_cgcore_no_internal_process_constraint_on_threads
           test_case = "#{@test_prefix}.#{test_case.split(' SKIP ').last}"
-          stats.add test_case, 'skip' unless stats.key? test_case
+          stats.add test_case, 'skip'
         else
           # cgroup will repeatedly output below subtests, ignore the duplicates.
           # selftests: cgroup: test_kmem
@@ -38,7 +41,7 @@ class Stater
           # not ok 1 test_kmem_basic
           # not ok 1 test_kmem_basic
           test_case = "#{@test_prefix}.#{test_case}"
-          stats.add test_case, result unless stats.key? test_case
+          stats.add test_case, result
         end
       end
 
